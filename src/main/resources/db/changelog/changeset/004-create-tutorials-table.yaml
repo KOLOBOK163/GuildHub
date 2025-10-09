@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-tutorials-table
+      author: Vladislav
+      changes:
+        - createTable:
+            tableName: tutorials
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: DATE
+              - column:
+                  name: updated_at
+                  type: DATE
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: tutorials
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_tutorial_user
