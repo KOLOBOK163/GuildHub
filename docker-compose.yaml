@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: guildhub_postgres
+    environment:
+      POSTGRES_DB: guildhub-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - guildhub_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: guildhub_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/guildhub-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345678
+    networks:
+      - guildhub_network
+
+volumes:
+  postgres_data:
+
+networks:
+  guildhub_network:
+    driver: bridge

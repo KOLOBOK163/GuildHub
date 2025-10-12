@@ -1,5 +1,6 @@
 package com.guildhub.Entity;
 
+import com.guildhub.Entity.VideoType.VideoType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +24,24 @@ public class Video {
 
     private String description;
 
+    @Column(name = "created_at")
     private LocalDate createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private VideoType type;
+
+    @Column(name = "youtube_url")
+    private String youtubeUrl;
+
+    private String map;
+
+    private String position;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tutorial_id")
-    private Tutorial tutorial;
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    private Integer views = 0;
+    private Integer likes = 0;
 }

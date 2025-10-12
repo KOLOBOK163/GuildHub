@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,11 +23,29 @@ public class Team {
 
     private String name;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @Column(name = "logo_url")
+    private String logoUrl;
+
+    private Integer prizes;
+
+    @Column(name = "hltv_rating")
+    private Integer hltvRating;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlayerCard> playerCards = new ArrayList<>();
 
-    private int prizes;
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MatchResult> matchHistory = new ArrayList<>();
 
-    private int rating;
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainingSession> trainingSchedule = new ArrayList<>();
 
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TacticalNote> tacticalNotes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TeamStatistic> privateStats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
 }
