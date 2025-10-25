@@ -51,5 +51,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private UserRole role = UserRole.FAN;
+    private List<UserRole> roles;
 }

@@ -5,5 +5,6 @@ public enum UserRole {
     PLAYER,
     TEAM_LEADER,
     COACH,
-    CONTENT_CREATOR
+    CONTENT_CREATOR,
+    ADMIN
 }

@@ -27,7 +27,11 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.liquibase:liquibase-core")
+    implementation(libs.jjwtApi)
+    runtimeOnly(libs.jjwtImpl)
+    runtimeOnly(libs.jjwtJackson)
     implementation(libs.mapstruct)
     annotationProcessor(libs.mapstructProcessor)
 	compileOnly("org.projectlombok:lombok")

@@ -1,6 +1,10 @@
 [versions]
 mapstruct = "1.4.2.Final"
+jjwt = "0.13.0"
 
 [libraries]
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct"}
 mapstructProcessor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct"}
+jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt"}
+jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt"}
+jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt"}
