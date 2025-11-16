@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 015-increase-avatar-url-length
+      author: Vladislav
+      changes:
+        - modifyDataType:
+            tableName: users
+            columnName: avatar_url
+            newDataType: VARCHAR(500)
+
+

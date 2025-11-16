@@ -1,11 +1,16 @@
 package com.guildhub.Entity;
 
+import com.guildhub.Validation.FaceitUrl;
+import com.guildhub.Validation.SteamId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +30,11 @@ public class PlayerCard {
     private String fullName;
 
     @Column(name = "steam_id")
+    @SteamId
     private String steamId;
 
     @Column(name = "faceit_url")
+    @FaceitUrl
     private String faceitUrl;
 
     private int prizes;
@@ -50,4 +57,12 @@ public class PlayerCard {
 
     @OneToMany(mappedBy = "playerCard", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Attendance> attendance = new ArrayList<>();
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

@@ -1,0 +1,22 @@
+package com.guildhub.Dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class TeamDto {
+    private Long id;
+    
+    @NotBlank(message = "Team name is required")
+    @Size(min = 2, max = 255, message = "Team name must be between 2 and 255 characters")
+    private String name;
+    
+    private String logoUrl;
+    private Integer prizes;
+    private Integer hltvRating;
+}
+
+

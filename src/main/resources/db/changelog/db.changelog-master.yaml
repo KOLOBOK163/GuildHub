@@ -13,3 +13,9 @@ databaseChangeLog:
       file: classpath:db/changelog/changeset/007-update-existing-tables.yaml
   - include:
       file: classpath:db/changelog/changeset/008-012-create-new-tables.yaml
+  - include:
+      file: classpath:db/changelog/changeset/013-create-user-roles-table.yaml
+  - include:
+      file: classpath:db/changelog/changeset/014-fix-password-column-length.yaml
+  - include:
+      file: classpath:db/changelog/changeset/015-increase-avatar-url-length.yaml

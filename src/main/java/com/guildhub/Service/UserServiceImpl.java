@@ -8,14 +8,17 @@ import com.guildhub.Reposirtory.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Service
 public class UserServiceImpl implements UserService{
 
     private final UserMapper userMapper;
@@ -24,10 +27,14 @@ public class UserServiceImpl implements UserService{
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final MinioService minioService;
+
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           MinioService minioService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.minioService = minioService;
     }
 
     @Override
@@ -112,5 +119,36 @@ public class UserServiceImpl implements UserService{
     {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id:" + userId));
+    }
+
+    @Override
+    public void updateAvatar(String newAvatarPath) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+        String oldAvatarUrl = user.getAvatarUrl();
+        if(oldAvatarUrl != null && !oldAvatarUrl.trim().isEmpty())
+        {
+            try {
+                minioService.deleteAvatar(oldAvatarUrl.trim());
+            }catch (Exception e)
+            {
+                throw new RuntimeException("Failed to delete old avatar");
+            }
+
+        }
+
+        user.setAvatarUrl(newAvatarPath);
+        userRepository.save(user);
+    }
+
+    @Override
+    public String getAvatar(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        String avatarUrl = user.getAvatarUrl();
+        return avatarUrl;
     }
 }

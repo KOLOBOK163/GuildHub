@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.lang.annotation.ElementType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +30,10 @@ public class User {
     @Column(length = 30, unique = true, nullable = false)
     private String email;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 255, nullable = false)
     private String password;
 
-    @Column(name = "avatar_url")
+    @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
     @CreationTimestamp
@@ -49,7 +48,9 @@ public class User {
     @JoinColumn(name = "player_card_data_id")
     private PlayerCard playerCardData;
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private List<UserRole> roles;
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<UserRole> roles = new ArrayList<>();
 }

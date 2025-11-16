@@ -40,17 +40,25 @@ public class JwtFilter extends OncePerRequestFilter {
         if(Objects.nonNull(authorizationHeader) && authorizationHeader.startsWith("Bearer "))
         {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtils.getUsernameFromJwtToken(jwt);
+            try {
+                username = jwtUtils.getUsernameFromJwtToken(jwt);
+            } catch (Exception e) {
+                // Invalid token, continue without authentication
+            }
         }
 
         if(Objects.nonNull(username) && SecurityContextHolder.getContext().getAuthentication() == null)
         {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            boolean isTokenValidated = jwtUtils.validateToken(jwt, userDetails);
-            if(isTokenValidated){
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            try {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                boolean isTokenValidated = jwtUtils.validateToken(jwt, userDetails);
+                if(isTokenValidated){
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            } catch (Exception e) {
+                // User not found or token invalid, continue without authentication
             }
         }
         filterChain.doFilter(request, response);
