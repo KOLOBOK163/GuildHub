@@ -1,5 +1,6 @@
 package com.guildhub.Service;
 
+import com.guildhub.Dto.AdminCreateUserDto;
 import com.guildhub.Dto.UserDto;
 import com.guildhub.Entity.Role.UserRole;
 import com.guildhub.Entity.User;
@@ -38,24 +39,26 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto create(UserDto userCreateDto) {
-        if(userRepository.existsByUsername(userCreateDto.getUsername()))
+    public UserDto createByAdmin(AdminCreateUserDto adminCreateUserDto) {
+        if(userRepository.existsByUsername(adminCreateUserDto.getUsername()))
         {
-            throw new EntityExistsException("Пользователь с username" + userCreateDto.getUsername() +  " уже существует");
+            throw new EntityExistsException("Пользователь с username" + adminCreateUserDto.getUsername() +  " уже существует");
         }
 
-        if(userRepository.existsByEmail(userCreateDto.getEmail()))
+        if(userRepository.existsByEmail(adminCreateUserDto.getEmail()))
         {
-            throw new EntityExistsException("Пользователь с email" + userCreateDto.getEmail() +  " уже существует");
+            throw new EntityExistsException("Пользователь с email" + adminCreateUserDto.getEmail() +  " уже существует");
         }
 
-        User user = userMapper.UserDtoToUserPojo(userCreateDto);
-        user.setUsername(userCreateDto.getUsername());
-        user.setEmail(userCreateDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
+        User user = new User();
+        user.setUsername(adminCreateUserDto.getUsername());
+        user.setEmail(adminCreateUserDto.getEmail());
+        user.setPassword(passwordEncoder.encode(adminCreateUserDto.getPassword()));
 
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(List.of(UserRole.FAN));
+        if (adminCreateUserDto.getRoles() != null && !adminCreateUserDto.getRoles().isEmpty()) {
+            user.setRoles(adminCreateUserDto.getRoles());
+        } else {
+            user.setRoles(List.of(UserRole.FAN)); // по умолчанию
         }
 
         return userMapper.UserPojoToUserDto(userRepository.save(user));

@@ -8,14 +8,14 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
   liquibase:
-    enabled: true
+    enabled: false
     change-log: classpath:db/changelog/db.changelog-master.yaml
   server:
     port: 8080
@@ -31,6 +31,12 @@ minio:
   buckets:
     avatars: guildhub-avatars
     videos: guildhub-videos
+
+grpc:
+  client:
+    grpc-news-service:
+      address: static://localhost:9090
+      negotiation-type: plaintext
 
 logging:
   level:

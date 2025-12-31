@@ -1,11 +1,14 @@
 package com.guildhub.Controller;
 
+import com.guildhub.Dto.AdminCreateUserDto;
 import com.guildhub.Dto.UserDto;
 import com.guildhub.Entity.User;
 import com.guildhub.Service.ObjectStorageService;
 import com.guildhub.Service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +34,14 @@ public class UserController {
         this.storageService = storageService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
+    @PostMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody AdminCreateUserDto userDto)
     {
-        return ResponseEntity.ok(userService.create(userDto));
+        return ResponseEntity.ok(userService.createByAdmin(userDto));
     }
 
-    @PutMapping
+    @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto)
     {
         return ResponseEntity.ok(userService.update(userId, userDto));

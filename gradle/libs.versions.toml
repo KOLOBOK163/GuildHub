@@ -2,6 +2,8 @@
 mapstruct = "1.4.2.Final"
 jjwt = "0.13.0"
 minio = "8.5.7"
+grpcVersion = "1.63.0"
+
 
 [libraries]
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct"}
@@ -10,3 +12,6 @@ jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt"}
 jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt"}
 jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt"}
 minio = {module = "io.minio:minio", version.ref="minio"}
+grpcVersionProtobuf = {module = "io.grpc:grpc-protobuf", version.ref="grpcVersion"}
+grpcVersionStub = {module = "io.grpc:grpc-stub", version.ref="grpcVersion"}
+grpcVersionNetty = {module = "io.grpc:grpc-netty-shaded", version.ref="grpcVersion"}

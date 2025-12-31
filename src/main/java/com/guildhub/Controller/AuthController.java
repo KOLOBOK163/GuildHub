@@ -1,12 +1,12 @@
 package com.guildhub.Controller;
 
-import com.guildhub.Dto.JwtResponse;
-import com.guildhub.Dto.UserDto;
+import com.guildhub.Dto.Response.JwtResponse;
+import com.guildhub.Dto.Request.LoginRequest;
+import com.guildhub.Dto.Request.RegisterRequest;
 import com.guildhub.Entity.User;
-import com.guildhub.Security.JwtUtils;
 import com.guildhub.Service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +23,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> signUp(@RequestBody UserDto userDto)
+    public ResponseEntity<User> signUp(@Valid @RequestBody RegisterRequest registerRequest)
     {
-        return ResponseEntity.ok(authService.signUp(userDto));
+        return ResponseEntity.ok(authService.signUp(registerRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> signIn(@RequestBody UserDto userDto)
+    public ResponseEntity<JwtResponse> signIn(@Valid @RequestBody LoginRequest loginRequest)
     {
-        return ResponseEntity.ok(authService.signIn(userDto));
+        return ResponseEntity.ok(authService.signIn(loginRequest));
     }
+
 
 }
