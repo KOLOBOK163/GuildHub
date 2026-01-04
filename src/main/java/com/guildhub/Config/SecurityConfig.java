@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/files/**").permitAll()
                         .requestMatchers("/api/admin-init/**").permitAll()
-                        .requestMatchers("/api/home/news", "/api/news").permitAll()
+                        .requestMatchers("/api/home/news", "/api/news/**").permitAll()
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",

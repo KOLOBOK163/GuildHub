@@ -38,6 +38,7 @@
         <MatchResultsManagement v-if="activeSection === 'matches'" />
         <TacticalNotesManagement v-if="activeSection === 'notes'" />
         <StatisticsManagement v-if="activeSection === 'statistics'" />
+        <NewsManagement v-if="activeSection === 'news'" />
       </div>
     </main>
   </div>
@@ -52,6 +53,8 @@ import TrainingSessionsManagement from '@/components/admin/TrainingSessionsManag
 import MatchResultsManagement from '@/components/admin/MatchResultsManagement.vue';
 import TacticalNotesManagement from '@/components/admin/TacticalNotesManagement.vue';
 import StatisticsManagement from '@/components/admin/StatisticsManagement.vue';
+// 🔹 Добавлен компонент NewsManagement
+import NewsManagement from '@/components/admin/NewsManagement.vue';
 
 export default {
   name: 'AdminPanel',
@@ -63,11 +66,12 @@ export default {
     TrainingSessionsManagement,
     MatchResultsManagement,
     TacticalNotesManagement,
-    StatisticsManagement
+    StatisticsManagement,
+    NewsManagement // 🔹 Подключён
   },
   data() {
     return {
-      activeSection: 'videos',
+      activeSection: 'news', // 🔹 По умолчанию открываем "Новости" (можно оставить 'videos', если предпочитаете)
       user: {
         username: '',
         roles: []
@@ -80,7 +84,8 @@ export default {
         { id: 'training', label: 'Тренировки', icon: '🏋️' },
         { id: 'matches', label: 'Матчи', icon: '⚔️' },
         { id: 'notes', label: 'Заметки', icon: '📝' },
-        { id: 'statistics', label: 'Статистика', icon: '📊' }
+        { id: 'statistics', label: 'Статистика', icon: '📊' },
+        { id: 'news', label: 'Новости', icon: '📰' } // 🔹 Добавлен раздел "Новости"
       ]
     };
   },
@@ -121,6 +126,7 @@ export default {
 </script>
 
 <style scoped>
+/* Стили остаются без изменений */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 .admin-panel {
@@ -292,4 +298,3 @@ export default {
   }
 }
 </style>
-

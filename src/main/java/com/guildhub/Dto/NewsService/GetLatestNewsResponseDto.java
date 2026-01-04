@@ -1,6 +1,5 @@
-package com.guildhub.Dto;
+package com.guildhub.Dto.NewsService;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

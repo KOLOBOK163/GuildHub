@@ -5,19 +5,27 @@
         <div class="container hero-content">
           <h1>Welcome to GuildHub</h1>
           <p>Your ultimate source for competitive gaming news, tournaments, and results.</p>
-          <button class="btn-primary">Explore Now</button>
+          <router-link to="/news" class="btn-primary">Explore Now</router-link>
         </div>
       </section>
 
       <section class="section news">
         <div class="container">
           <h2>News Feed</h2>
-          <div class="news-feed-grid">
-            <div v-for="news in newsFeed" :key="news.id" class="news-card">
-              <img :src="news.image" :alt="news.title" class="news-image" />
-              <h3 class="news-title">{{ news.title }}</h3>
-              <p class="news-description">{{ news.description }}</p>
-            </div>
+          <div v-if="loadingNews" class="news-loading">Loading latest news...</div>
+          <div v-else-if="newsFeed.length === 0" class="news-empty">No news available.</div>
+          <div v-else class="news-feed-list">
+            <router-link
+              v-for="news in newsFeed"
+              :key="news.id"
+              :to="`/news/${news.id}`"
+              class="news-item-link"
+            >
+              <div class="news-item">
+                <img v-if="news.imageUrl" :src="news.imageUrl" :alt="news.title" class="news-item-image" />
+                <h3 class="news-item-title">{{ news.title }}</h3>
+              </div>
+            </router-link>
           </div>
         </div>
       </section>
@@ -72,10 +80,34 @@ export default {
         { id: 3, avatar: '/player3.png', name: 'NiKo' },
         { id: 4, avatar: '/player4.png', name: 'sh1ro' },
       ],
-      newsFeed: [
-        { id: 1, image: '/news1.jpg', title: 'News Title 1', description: 'Lorem ipsum dolor sit amet' }
-      ]
+      newsFeed: [],
+      loadingNews: true
     };
+  },
+  async mounted() {
+    await this.loadLatestNews();
+  },
+  methods: {
+    async loadLatestNews() {
+      try {
+        const response = await fetch('http://localhost:8080/api/home/news?limit=5', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          this.newsFeed = data.news || [];
+        } else {
+          this.newsFeed = [];
+        }
+      } catch (err) {
+        console.error('Failed to load news:', err);
+        this.newsFeed = [];
+      } finally {
+        this.loadingNews = false;
+      }
+    }
   }
 };
 </script>
@@ -85,6 +117,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
@@ -143,6 +176,8 @@ export default {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
   box-shadow: 0 4px 12px rgba(102, 217, 255, 0.3);
 }
 
@@ -167,8 +202,7 @@ export default {
 }
 
 .team-grid,
-.player-grid,
-.news-feed-grid {
+.player-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
@@ -176,8 +210,7 @@ export default {
 }
 
 .team-card,
-.player-card,
-.news-card {
+.player-card {
   background: rgba(30, 30, 30, 0.6);
   border-radius: 12px;
   padding: 1.5rem;
@@ -187,16 +220,14 @@ export default {
 }
 
 .team-card:hover,
-.player-card:hover,
-.news-card:hover {
+.player-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   background: rgba(40, 40, 40, 0.8);
 }
 
 .team-logo,
-.player-avatar,
-.news-image {
+.player-avatar {
   width: 100px;
   height: 100px;
   object-fit: contain;
@@ -206,37 +237,86 @@ export default {
 }
 
 .team-card h3,
-.player-card h3,
-.news-title {
+.player-card h3 {
   font-size: 1.2rem;
   font-weight: 600;
   color: white;
   margin: 0;
 }
 
-.news-card {
-  text-align: left;
-  max-width: 300px;
-  margin: 0 auto;
+/* === НОВОСТИ В ЛЕНТУ === */
+.news-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.news-title {
-  margin: 1rem 0 0.5rem 0;
+.news-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
-.news-description {
-  font-size: 0.95rem;
-  color: #aaa;
-  line-height: 1.5;
+.news-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.news-item:hover {
+  background: rgba(40, 40, 40, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.news-item-image {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.news-item-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: white;
   margin: 0;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  flex-grow: 1;
+  min-width: 0;
 }
 
+.news-loading,
+.news-empty {
+  text-align: center;
+  color: #aaa;
+  padding: 1.5rem;
+}
+
+/* === FOOTER === */
 .footer {
   background-color: #0a0a0a;
   padding: 1.5rem 0;
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+  margin-top: auto;
 }
 
 .footer p {
@@ -250,9 +330,15 @@ export default {
   .btn-primary { padding: 0.75rem 1.5rem; font-size: 0.95rem; }
   .section h2 { font-size: 2rem; }
   .team-grid,
-  .player-grid,
-  .news-feed-grid {
+  .player-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .news-item-image {
+    width: 60px;
+    height: 60px;
+  }
+  .news-item-title {
+    font-size: 1rem;
   }
 }
 </style>

@@ -1,14 +1,11 @@
 package com.guildhub.grpc.Controller;
 
-import com.guildhub.Dto.GetAllNewsResponseDto;
-import com.guildhub.Dto.GetLatestNewsResponseDto;
+import com.guildhub.Dto.NewsService.*;
 import com.guildhub.grpc.NewsGrpcClient;
-import com.guildhub.newsservice.grpc.GetAllNewsResponse;
-import com.guildhub.newsservice.grpc.GetLatestNewsResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.guildhub.newsservice.grpc.CreateNewsRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -18,6 +15,17 @@ public class NewsController {
 
     public NewsController(NewsGrpcClient newsGrpcClient) {
         this.newsGrpcClient = newsGrpcClient;
+    }
+
+    @PostMapping("/news")
+    public CreateNewsResponseDto createNews(@Valid @RequestBody NewsDto newsDto) {
+        return newsGrpcClient.createNewsAsDto(newsDto);
+    }
+
+    @PutMapping("/news/{id}")
+    public UpdateNewsResponseDto updateNews(@PathVariable("id") Long id, @RequestBody NewsDto newsDto)
+    {
+        return newsGrpcClient.updateNewsAsDto(id, newsDto);
     }
 
     @GetMapping("/home/news")
@@ -30,5 +38,16 @@ public class NewsController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return newsGrpcClient.getAllNewsAsDto(page, size);
+    }
+
+    @GetMapping("/news/{id}")
+    public GetNewsByIdDto getNewsById(@PathVariable("id") Long id) {
+        return newsGrpcClient.getNewsByIdAsDto(id);
+    }
+
+    @DeleteMapping("/news/{id}")
+    public ResponseEntity<Void> deleteNews(@PathVariable("id") Long id) {
+        newsGrpcClient.deleteNewsById(id);
+        return ResponseEntity.noContent().build();
     }
 }

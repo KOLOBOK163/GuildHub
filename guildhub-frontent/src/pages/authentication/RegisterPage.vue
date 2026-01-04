@@ -14,7 +14,7 @@
     <div class="registration-form">
       <form @submit.prevent="sendData">
         <input type="text" placeholder="Username" v-model="username" required />
-        <input type="email" placeholder="Email" v-model="email" required /> <!-- Add v-model here -->
+        <input type="email" placeholder="Email" v-model="email" required />
         <input type="password" placeholder="Password" v-model="password" required />
         <button type="submit">Sign Up</button>
       </form>
@@ -54,11 +54,11 @@ export default {
         } else {
           const error = await response.text();
           console.error('Registration error:', error);
-          alert(error); // Show error message to the user
+          alert(error);
         }
       } catch (err) {
         console.error('Registration error:', err);
-        alert('An unexpected error occurred. Please try again later.'); // Generic error message
+        alert('An unexpected error occurred. Please try again later.');
       }
     }
   }

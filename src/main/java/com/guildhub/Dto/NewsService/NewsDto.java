@@ -1,4 +1,4 @@
-package com.guildhub.Dto;
+package com.guildhub.Dto.NewsService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,4 +19,5 @@ public class NewsDto {
     private String imageUrl;
     private Boolean isNew;
     private Instant createdAt;
+    private Instant updatedAt;
 }

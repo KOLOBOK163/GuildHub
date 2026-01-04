@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService{
         if (adminCreateUserDto.getRoles() != null && !adminCreateUserDto.getRoles().isEmpty()) {
             user.setRoles(adminCreateUserDto.getRoles());
         } else {
-            user.setRoles(List.of(UserRole.FAN)); // по умолчанию
+            user.setRoles(List.of(UserRole.FAN));
         }
 
         return userMapper.UserPojoToUserDto(userRepository.save(user));

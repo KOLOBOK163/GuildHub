@@ -1,11 +1,11 @@
 package com.guildhub.grpc;
 
-import com.guildhub.Dto.GetAllNewsResponseDto;
-import com.guildhub.Dto.GetLatestNewsResponseDto;
-import com.guildhub.Dto.NewsDto;
+import com.guildhub.Dto.NewsService.*;
 import com.guildhub.newsservice.grpc.*;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import com.guildhub.newsservice.grpc.NewsProto.*;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 
 import java.time.Instant;
@@ -33,6 +33,67 @@ public class NewsGrpcClient {
         return newsServiceStub.getAllNews(request);
     }
 
+    public GetNewsByIdResponse getNewsById(Long id) {
+        GetNewsByIdRequest request = GetNewsByIdRequest.newBuilder()
+                .setId(id)
+                .build();
+        return newsServiceStub.getNewsById(request);
+    }
+
+    public CreateNewsResponseDto createNewsAsDto(NewsDto news) {
+        CreateNewsResponse response = newsServiceStub.createNews(
+                CreateNewsRequest.newBuilder()
+                        .setTitle(news.getTitle())
+                        .setContent(news.getContent())
+                        .setAuthor(news.getAuthor())
+                        .setImageUrl(news.getImageUrl())
+                        .setIsNew(news.getIsNew())
+                        .build()
+        );
+
+        News proto = response.getNews();
+
+        NewsDto newsDto = new NewsDto(
+                proto.getId(),
+                proto.getTitle(),
+                proto.getContent(),
+                proto.getAuthor(),
+                proto.getImageUrl(),
+                proto.getIsNew(),
+                Instant.ofEpochSecond(proto.getCreatedAt().getSeconds(), proto.getCreatedAt().getNanos()),
+                null
+        );
+        return new CreateNewsResponseDto(newsDto);
+    }
+
+    public UpdateNewsResponseDto updateNewsAsDto(Long id, NewsDto news) {
+        UpdateNewsByIdResponse response = newsServiceStub.updateNewsById(
+                UpdateNewsByIdRequest.newBuilder()
+                        .setTitle(news.getTitle())
+                        .setContent(news.getContent())
+                        .setAuthor(news.getAuthor())
+                        .setImageUrl(news.getImageUrl())
+                        .setIsNew(news.getIsNew())
+                        .build()
+        );
+
+        News proto = response.getNews();
+        NewsDto newsDto = new NewsDto(
+                proto.getId(),
+                proto.getTitle(),
+                proto.getContent(),
+                proto.getAuthor(),
+                proto.getImageUrl(),
+                proto.getIsNew(),
+                Instant.ofEpochSecond(proto.getCreatedAt().getSeconds(), proto.getCreatedAt().getNanos()),
+                proto.hasUpdatedAt()
+                        ? Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds(), proto.getUpdatedAt().getNanos())
+                        : null
+        );
+
+        return new UpdateNewsResponseDto(newsDto);
+    }
+
     public GetLatestNewsResponseDto getLatestNewsAsDto(int limit) {
         GetLatestNewsResponse response = getLatestNews(limit);
 
@@ -44,7 +105,10 @@ public class NewsGrpcClient {
                         proto.getAuthor(),
                         proto.getImageUrl(),
                         proto.getIsNew(),
-                        Instant.ofEpochSecond(proto.getCreatedAt().getSeconds())
+                        Instant.ofEpochSecond(proto.getCreatedAt().getSeconds(), proto.getCreatedAt().getNanos()),
+                        proto.hasUpdatedAt()
+                                ? Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds(), proto.getUpdatedAt().getNanos())
+                                : null
                 ))
                 .collect(Collectors.toList());
 
@@ -62,9 +126,51 @@ public class NewsGrpcClient {
                         proto.getAuthor(),
                         proto.getImageUrl(),
                         proto.getIsNew(),
-                        Instant.ofEpochSecond(proto.getCreatedAt().getSeconds())
+                        Instant.ofEpochSecond(proto.getCreatedAt().getSeconds(), proto.getCreatedAt().getNanos()),
+                        proto.hasUpdatedAt()
+                                ? Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds(), proto.getUpdatedAt().getNanos())
+                                : null
                 ))
                 .collect(Collectors.toList());
-        return new GetAllNewsResponseDto(news);
+
+        return new GetAllNewsResponseDto(news, page, pageSize, response.getTotalCount());
+    }
+
+    public GetNewsByIdDto getNewsByIdAsDto(Long id) {
+        GetNewsByIdResponse response = getNewsById(id);
+
+        NewsDto news = new NewsDto(
+                response.getNews().getId(),
+                response.getNews().getTitle(),
+                response.getNews().getContent(),
+                response.getNews().getAuthor(),
+                response.getNews().getImageUrl(),
+                response.getNews().getIsNew(),
+                Instant.ofEpochSecond(
+                        response.getNews().getCreatedAt().getSeconds(),
+                        response.getNews().getCreatedAt().getNanos()
+                ),
+                Instant.ofEpochSecond(
+                        response.getNews().getUpdatedAt().getSeconds(),
+                        response.getNews().getUpdatedAt().getNanos()
+                )
+        );
+
+        return new GetNewsByIdDto(news);
+    }
+
+    public boolean deleteNewsById(Long id) {
+        try {
+            DeleteNewsByIdRequest request = DeleteNewsByIdRequest.newBuilder()
+                    .setId(id)
+                    .build();
+            DeleteNewsByIdResponse response = newsServiceStub.deleteNewsById(request);
+            return response.getSuccess();
+        } catch (StatusRuntimeException e) {
+            if (e.getStatus().getCode() == Status.Code.NOT_FOUND) {
+                throw new EntityNotFoundException("News not found: " + id);
+            }
+            throw e;
+        }
     }
 }
