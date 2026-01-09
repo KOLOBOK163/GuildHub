@@ -1,6 +1,5 @@
 <template>
   <div class="admin-panel">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2>Admin Panel</h2>
@@ -19,7 +18,6 @@
       </nav>
     </aside>
 
-    <!-- Main Content -->
     <main class="admin-content">
       <header class="content-header">
         <h1>{{ getCurrentSectionLabel() }}</h1>
@@ -53,7 +51,6 @@ import TrainingSessionsManagement from '@/components/admin/TrainingSessionsManag
 import MatchResultsManagement from '@/components/admin/MatchResultsManagement.vue';
 import TacticalNotesManagement from '@/components/admin/TacticalNotesManagement.vue';
 import StatisticsManagement from '@/components/admin/StatisticsManagement.vue';
-// 🔹 Добавлен компонент NewsManagement
 import NewsManagement from '@/components/admin/NewsManagement.vue';
 
 export default {
@@ -67,11 +64,11 @@ export default {
     MatchResultsManagement,
     TacticalNotesManagement,
     StatisticsManagement,
-    NewsManagement // 🔹 Подключён
+    NewsManagement
   },
   data() {
     return {
-      activeSection: 'news', // 🔹 По умолчанию открываем "Новости" (можно оставить 'videos', если предпочитаете)
+      activeSection: 'news',
       user: {
         username: '',
         roles: []
@@ -85,7 +82,7 @@ export default {
         { id: 'matches', label: 'Матчи', icon: '⚔️' },
         { id: 'notes', label: 'Заметки', icon: '📝' },
         { id: 'statistics', label: 'Статистика', icon: '📊' },
-        { id: 'news', label: 'Новости', icon: '📰' } // 🔹 Добавлен раздел "Новости"
+        { id: 'news', label: 'Новости', icon: '📰' }
       ]
     };
   },
@@ -126,7 +123,6 @@ export default {
 </script>
 
 <style scoped>
-/* Стили остаются без изменений */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 .admin-panel {
@@ -137,7 +133,6 @@ export default {
   font-family: 'Roboto', sans-serif;
 }
 
-/* Sidebar */
 .sidebar {
   width: 280px;
   background-color: #0a0a0a;
@@ -213,7 +208,6 @@ export default {
   font-weight: 500;
 }
 
-/* Main Content */
 .admin-content {
   flex: 1;
   display: flex;
@@ -270,7 +264,6 @@ export default {
   overflow-y: auto;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .admin-panel {
     flex-direction: column;

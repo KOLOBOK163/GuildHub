@@ -41,7 +41,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingMatch" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingMatch ? 'Редактировать результат матча' : 'Добавить результат матча' }}</h2>
@@ -259,7 +258,6 @@ export default {
   color: #ffc107;
 }
 
-/* Остальные стили такие же, как в VideosManagement */
 .management-container {
   width: 100%;
 }

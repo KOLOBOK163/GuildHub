@@ -38,7 +38,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingTeam" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingTeam ? 'Редактировать команду' : 'Добавить команду' }}</h2>
@@ -191,7 +190,6 @@ export default {
   object-fit: cover;
 }
 
-/* Остальные стили такие же, как в VideosManagement */
 .management-container {
   width: 100%;
 }

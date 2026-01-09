@@ -35,7 +35,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingSession" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingSession ? 'Редактировать тренировку' : 'Добавить тренировку' }}</h2>
@@ -203,7 +202,6 @@ export default {
 </script>
 
 <style scoped>
-/* Используем те же стили, что и в VideosManagement */
 .management-container {
   width: 100%;
 }

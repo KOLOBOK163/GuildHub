@@ -35,7 +35,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingNews" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingNews ? 'Редактировать новость' : 'Добавить новость' }}</h2>
@@ -53,8 +52,21 @@
             <textarea v-model="formData.content" rows="5"></textarea>
           </div>
           <div class="form-group">
-            <label>URL изображения</label>
-            <input v-model="formData.imageUrl" type="text" placeholder="https://example.com/image.jpg" />
+            <label>Изображение</label>
+            <input 
+              type="file" 
+              @change="handleImageChange" 
+              accept="image/*"
+              ref="imageInput"
+            />
+            <div v-if="formData.imagePreview" class="image-preview">
+              <img :src="formData.imagePreview" alt="Preview" />
+              <button type="button" @click="clearImage" class="btn-remove-image">Удалить</button>
+            </div>
+            <div v-else-if="editingNews && editingNews.imageUrl" class="current-image">
+              <p>Текущее изображение:</p>
+              <img :src="editingNews.imageUrl" alt="Current" />
+            </div>
           </div>
           <div class="form-group">
             <label>
@@ -84,7 +96,8 @@ export default {
         title: '',
         content: '',
         author: '',
-        imageUrl: '',
+        imageFile: null,
+        imagePreview: null,
         isNew: true
       }
     };
@@ -103,7 +116,6 @@ export default {
         });
         if (response.ok) {
           const data = await response.json();
-          // Если API возвращает GetAllNewsResponseDto (объект с полем news)
           this.newsList = data.news || data;
         }
       } catch (error) {
@@ -117,9 +129,31 @@ export default {
         title: news.title || '',
         content: news.content || '',
         author: news.author || '',
-        imageUrl: news.imageUrl || '',
+        imageFile: null,
+        imagePreview: null,
         isNew: news.isNew !== undefined ? news.isNew : true
       };
+      if (this.$refs.imageInput) {
+        this.$refs.imageInput.value = '';
+      }
+    },
+    handleImageChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.formData.imageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.formData.imagePreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    clearImage() {
+      this.formData.imageFile = null;
+      this.formData.imagePreview = null;
+      if (this.$refs.imageInput) {
+        this.$refs.imageInput.value = '';
+      }
     },
     async saveNews() {
       try {
@@ -129,13 +163,22 @@ export default {
           : 'http://localhost:8080/api/news';
         const method = this.editingNews ? 'PUT' : 'POST';
 
+        const formData = new FormData();
+        formData.append('title', this.formData.title);
+        formData.append('content', this.formData.content || '');
+        formData.append('author', this.formData.author);
+        formData.append('isNew', this.formData.isNew ? 'true' : 'false');
+        
+        if (this.formData.imageFile) {
+          formData.append('image', this.formData.imageFile);
+        }
+
         const response = await fetch(url, {
           method,
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify(this.formData)
+          body: formData
         });
 
         if (response.ok) {
@@ -179,9 +222,13 @@ export default {
         title: '',
         content: '',
         author: '',
-        imageUrl: '',
+        imageFile: null,
+        imagePreview: null,
         isNew: true
       };
+      if (this.$refs.imageInput) {
+        this.$refs.imageInput.value = '';
+      }
     },
     formatDate(isoString) {
       if (!isoString) return '-';
@@ -199,7 +246,6 @@ export default {
 </script>
 
 <style scoped>
-/* Стили полностью совпадают с TacticalNotesManagement */
 .management-container {
   width: 100%;
 }
@@ -398,5 +444,44 @@ export default {
 .btn-save:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+}
+
+.image-preview,
+.current-image {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(30, 30, 30, 0.8);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-preview img,
+.current-image img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 6px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.btn-remove-image {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-remove-image:hover {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+.current-image p {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 </style>

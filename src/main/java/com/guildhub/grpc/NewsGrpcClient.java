@@ -1,5 +1,6 @@
 package com.guildhub.grpc;
 
+import com.google.protobuf.ByteString;
 import com.guildhub.Dto.NewsService.*;
 import com.guildhub.newsservice.grpc.*;
 import io.grpc.Status;
@@ -40,16 +41,25 @@ public class NewsGrpcClient {
         return newsServiceStub.getNewsById(request);
     }
 
-    public CreateNewsResponseDto createNewsAsDto(NewsDto news) {
-        CreateNewsResponse response = newsServiceStub.createNews(
-                CreateNewsRequest.newBuilder()
-                        .setTitle(news.getTitle())
-                        .setContent(news.getContent())
-                        .setAuthor(news.getAuthor())
-                        .setImageUrl(news.getImageUrl())
-                        .setIsNew(news.getIsNew())
-                        .build()
-        );
+    public CreateNewsResponseDto createNewsAsDto(NewsDto news, byte[] imageData, String imageFileName, String imageContentType) {
+        CreateNewsRequest.Builder requestBuilder = CreateNewsRequest.newBuilder()
+                .setTitle(news.getTitle())
+                .setContent(news.getContent())
+                .setAuthor(news.getAuthor())
+                .setIsNew(news.getIsNew());
+        
+        if (imageData != null && imageData.length > 0) {
+            requestBuilder.setImageData(ByteString.copyFrom(imageData));
+        }
+        if (imageFileName != null && !imageFileName.isEmpty()) {
+            requestBuilder.setImageFilename(imageFileName);
+        }
+        if (imageContentType != null && !imageContentType.isEmpty()) {
+            requestBuilder.setImageContentType(imageContentType);
+        }
+        
+        CreateNewsResponse response = newsServiceStub.createNews(requestBuilder.build());
+
 
         News proto = response.getNews();
 
@@ -66,16 +76,25 @@ public class NewsGrpcClient {
         return new CreateNewsResponseDto(newsDto);
     }
 
-    public UpdateNewsResponseDto updateNewsAsDto(Long id, NewsDto news) {
-        UpdateNewsByIdResponse response = newsServiceStub.updateNewsById(
-                UpdateNewsByIdRequest.newBuilder()
-                        .setTitle(news.getTitle())
-                        .setContent(news.getContent())
-                        .setAuthor(news.getAuthor())
-                        .setImageUrl(news.getImageUrl())
-                        .setIsNew(news.getIsNew())
-                        .build()
-        );
+    public UpdateNewsResponseDto updateNewsAsDto(Long id, NewsDto news, byte[] imageData, String imageFilename, String imageContentType) {
+        UpdateNewsByIdRequest.Builder requestBuilder = UpdateNewsByIdRequest.newBuilder()
+                .setId(id)
+                .setTitle(news.getTitle())
+                .setContent(news.getContent())
+                .setAuthor(news.getAuthor())
+                .setIsNew(news.getIsNew());
+        
+        if (imageData != null && imageData.length > 0) {
+            requestBuilder.setImageData(ByteString.copyFrom(imageData));
+        }
+        if (imageFilename != null && !imageFilename.isEmpty()) {
+            requestBuilder.setImageFilename(imageFilename);
+        }
+        if (imageContentType != null && !imageContentType.isEmpty()) {
+            requestBuilder.setImageContentType(imageContentType);
+        }
+        
+        UpdateNewsByIdResponse response = newsServiceStub.updateNewsById(requestBuilder.build());
 
         News proto = response.getNews();
         NewsDto newsDto = new NewsDto(
@@ -138,22 +157,22 @@ public class NewsGrpcClient {
 
     public GetNewsByIdDto getNewsByIdAsDto(Long id) {
         GetNewsByIdResponse response = getNewsById(id);
+        News proto = response.getNews();
 
         NewsDto news = new NewsDto(
-                response.getNews().getId(),
-                response.getNews().getTitle(),
-                response.getNews().getContent(),
-                response.getNews().getAuthor(),
-                response.getNews().getImageUrl(),
-                response.getNews().getIsNew(),
+                proto.getId(),
+                proto.getTitle(),
+                proto.getContent(),
+                proto.getAuthor(),
+                proto.getImageUrl(),
+                proto.getIsNew(),
                 Instant.ofEpochSecond(
-                        response.getNews().getCreatedAt().getSeconds(),
-                        response.getNews().getCreatedAt().getNanos()
+                        proto.getCreatedAt().getSeconds(),
+                        proto.getCreatedAt().getNanos()
                 ),
-                Instant.ofEpochSecond(
-                        response.getNews().getUpdatedAt().getSeconds(),
-                        response.getNews().getUpdatedAt().getNanos()
-                )
+                proto.hasUpdatedAt()
+                        ? Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds(), proto.getUpdatedAt().getNanos())
+                        : null
         );
 
         return new GetNewsByIdDto(news);

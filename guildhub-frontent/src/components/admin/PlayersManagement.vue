@@ -35,7 +35,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingPlayer" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingPlayer ? 'Редактировать игрока' : 'Добавить игрока' }}</h2>
@@ -196,7 +195,6 @@ export default {
 </script>
 
 <style scoped>
-/* Используем те же стили, что и в VideosManagement */
 .management-container {
   width: 100%;
 }

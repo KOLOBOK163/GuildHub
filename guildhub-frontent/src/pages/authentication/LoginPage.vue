@@ -96,7 +96,6 @@ body {
   padding: 20px;
 }
 
-/* Логотип */
 .header {
   position: absolute;
   top: 30px;
@@ -231,7 +230,6 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* Социальные кнопки */
 .social-login {
   display: flex;
   gap: 12px;

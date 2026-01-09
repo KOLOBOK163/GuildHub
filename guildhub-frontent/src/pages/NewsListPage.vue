@@ -3,8 +3,6 @@
     <div class="main-content">
       <div class="container">
         <h1>Все новости</h1>
-
-        <!-- Список новостей -->
         <div class="news-feed-grid">
           <div v-for="news in newsList" :key="news.id" class="news-card">
             <img v-if="news.imageUrl" :src="news.imageUrl" :alt="news.title" class="news-image" />
@@ -14,7 +12,6 @@
           </div>
         </div>
 
-        <!-- Пагинация -->
         <div class="pagination" v-if="totalPages > 1">
           <button
             :disabled="currentPage === 0"

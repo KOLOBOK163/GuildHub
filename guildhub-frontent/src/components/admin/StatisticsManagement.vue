@@ -39,7 +39,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingStat" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingStat ? 'Редактировать статистику' : 'Добавить статистику' }}</h2>
@@ -215,7 +214,6 @@ export default {
 </script>
 
 <style scoped>
-/* Используем те же стили, что и в VideosManagement */
 .management-container {
   width: 100%;
 }

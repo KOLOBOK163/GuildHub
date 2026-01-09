@@ -244,7 +244,6 @@ export default {
   margin: 0;
 }
 
-/* === НОВОСТИ В ЛЕНТУ === */
 .news-feed-list {
   display: flex;
   flex-direction: column;
@@ -309,7 +308,6 @@ export default {
   padding: 1.5rem;
 }
 
-/* === FOOTER === */
 .footer {
   background-color: #0a0a0a;
   padding: 1.5rem 0;

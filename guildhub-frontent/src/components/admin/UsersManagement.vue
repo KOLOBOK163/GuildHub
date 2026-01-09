@@ -38,7 +38,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingUser" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingUser ? 'Редактировать пользователя' : 'Создать пользователя' }}</h2>
@@ -115,13 +114,10 @@ export default {
       }
     },
     async editUser(user) {
-      // Загружаем полную информацию о пользователе для получения ролей и id
       try {
         const token = localStorage.getItem('token');
-        // Если у пользователя нет id, пытаемся найти его по username через getAllUsers
         let userId = user.id;
         if (!userId) {
-          // Пытаемся найти пользователя по username в списке
           const allUsersResponse = await fetch('http://localhost:8080/api/users', {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -157,8 +153,7 @@ export default {
       } catch (error) {
         console.error('Error loading user details:', error);
       }
-      
-      // Если не удалось загрузить, используем данные из списка
+
       this.editingUser = user;
       this.formData = {
         username: user.username || '',
@@ -172,7 +167,6 @@ export default {
         const token = localStorage.getItem('token');
         
         if (this.editingUser) {
-          // Update user
           const response = await fetch(`http://localhost:8080/api/users/${this.editingUser.id}`, {
             method: 'PUT',
             headers: {
@@ -193,7 +187,6 @@ export default {
             alert('Ошибка при сохранении');
           }
         } else {
-          // Create user (admin only)
           const response = await fetch('http://localhost:8080/api/users/admin', {
             method: 'POST',
             headers: {
@@ -287,7 +280,6 @@ export default {
   cursor: pointer;
 }
 
-/* Остальные стили такие же, как в VideosManagement */
 .management-container {
   width: 100%;
 }

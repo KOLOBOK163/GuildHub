@@ -37,7 +37,6 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal -->
     <div v-if="showCreateModal || editingVideo" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h2>{{ editingVideo ? 'Редактировать видео' : 'Добавить видео' }}</h2>

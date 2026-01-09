@@ -200,7 +200,6 @@ body {
   box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.2);
 }
 
-/* Кнопка */
 .registration-form button {
   padding: 14px;
   background: linear-gradient(90deg, #6e8efb, #8a76f0);
