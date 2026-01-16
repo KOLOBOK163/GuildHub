@@ -17,8 +17,4 @@ public interface UserService {
     List<UserDto> getAllUsers();
 
     User getUserById(Long userId);
-
-    void updateAvatar(String newAvatarPath);
-
-    String getAvatar(Long userId);
 }

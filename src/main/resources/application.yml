@@ -14,9 +14,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
-  liquibase:
-    enabled: false
-    change-log: classpath:db/changelog/db.changelog-master.yaml
   server:
     port: 8080
 
@@ -24,17 +21,8 @@ jwt:
   secret: guildhub-secret-key-for-jwt-token-generation-change-this-in-production-123456789012345678901234567890
   access_token_expiration: 86400000
 
-  buckets:
-    avatars: guildhub-avatars
-    videos: guildhub-videos
-
 grpc:
   client:
     grpc-news-service:
       address: static://localhost:9090
       negotiation-type: plaintext
-
-logging:
-  level:
-    org.springframework.boot.autoconfigure.liquibase: DEBUG
-    liquibase: DEBUG

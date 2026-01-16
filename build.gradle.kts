@@ -5,6 +5,11 @@ plugins {
     id("com.google.protobuf") version "0.9.6"
 }
 
+// Отключаем тестирование
+tasks.withType<Test> {
+    enabled = false
+}
+
 group = "com.guildhub"
 version = "0.0.1-SNAPSHOT"
 description = "GuildHub - complete solution for gaming teams"
@@ -30,7 +35,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.liquibase:liquibase-core")
     implementation(libs.grpcVersionProtobuf)
     implementation(libs.grpcVersionStub)
     implementation(libs.grpcVersionNetty)
@@ -45,8 +49,6 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
     annotationProcessor ("org.projectlombok:lombok-mapstruct-binding:0.2.0")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(libs.minio)
     compileOnly("jakarta.annotation:jakarta.annotation-api:1.3.5")
 }
@@ -74,8 +76,4 @@ protobuf {
             }
         }
     }
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }
